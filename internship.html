@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang=ja>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="img/favicon.svg">
+    <title>
+        お肉採点アプリ🍖｜画像認識でAIがお肉に点数をつけます
+    </title>
+    <script crossorigin src=" https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src=" https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.38/browser.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/babel" src="./rendering.jsx"></script>
+    <script type="text/babel" src="./send.jsx"></script>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <script type="text/babel">
+        // ファイルを開くの状態変更時処理
+        $("#selectFile").change(function () {
+            if (imageFileRendering($(this).prop('files')[0])) {
+                $('#sendAction').prop('disabled', false);
+            } else {
+                $('#sendAction').prop('disabled', true);
+            }
+        });
+
+        // 点数評価ボタン押下処理
+        $('#sendAction').on('click', function () {
+            // send.jsxのsend呼出し
+            send($('#selectFile').prop('files')[0], $('#predict').val());
+        });
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>お肉採点アプリ🍖</h1>
+    </header>    
+    <div id="container">
+        <div id="imageContainer" onclick="$('#selectFile').click()">
+
+        </div>
+        <input hidden="true" type="file" accept=".jpg,.jpeg,.png,.gif" id="selectFile" />
+
+        
+        <br>
+        <div class='output'>
+            <h3>AIがお肉に100点満点で点数をつけるよ</h3>
+            <div class="hoge">
+                <button onclick="$('#selectFile').click();" id="open" class='btn04'>
+                    <span>
+                        <font color='black'><i class="fas fa-images"></i></font> お肉の写真をえらぶ 🍖
+                    </span>
+                </button>
+            </div>
+            <div class="foo">
+                <div class="form-group">
+                    <label for="predict">予想点数</label>
+                    <select class="form-control" id="predict">
+                        <option value="0">10</option>
+                        <option value="1">20</option>
+                        <option value="2">30</option>
+                        <option value="3">40</option>
+                        <option value="4">50</option>
+                        <option value="5">60</option>
+                        <option value="6">70</option>
+                        <option value="7">80</option>
+                        <option value="8">90</option>
+                        <option value="9">100</option>
+                    </select>
+                </div>
+            </div>
+            <div class='hoge'>
+                <button id="sendAction" disabled="true" class='btn04'><span>点数評価</span></button>
+            </div>
+            
+            <div id="overlay">
+                <div class="cv-spinner">
+                    <span class="spinner"></span>
+                </div>
+            </div>
+        </div>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" id='moodal'>
+            Launch demo modal
+        </button>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalCenterTitle">お肉の点数は</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+
+                <div class="modal-body">
+                    <h1>
+                    <div id="result">
+                        <!-- scoreを出力する -->
+                    </div>
+                    </h1>
+                    <h2>
+                    <div id="eval">
+                        <!-- 評価の出力 -->
+                    </div>
+                    </h2>
+                </div>
+
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+</html>
