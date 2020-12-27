@@ -33,7 +33,7 @@ function send(file, predict) {
     }).fail(function(data, textStatus, error) {
         $("#overlay").fadeOut(300);
         if (textStatus){
-            alert('タイムアウトしました。画像サイズが大きいです。')
+            alert(textStatus)
         }
         alert(jqXHR.status);
         console.log('失敗');
