@@ -17,6 +17,7 @@ function send(file, predict) {
     processData: false,
     contentType: false,
     data: formdata,
+    timeout: 30000
     }).done(function(data, textStatus, jqXHR) {
         var api_reply = data.result.score;
         console.log(api_reply);
@@ -25,12 +26,15 @@ function send(file, predict) {
         var score = Math.round(api_reply * 100) / 100;
         console.log(score)
         scoreRendering(score);
-
         // 予想と結果の差の絶対値,四捨五入
         var difference = Math.round(Math.abs(score - predict));
         evalRendering(difference);
 
     }).fail(function(data, textStatus, error) {
+        $("#overlay").fadeOut(300);
+        if (textStatus){
+            alert('タイムアウトしました。画像サイズが大きいです。')
+        }
         alert(jqXHR.status);
         console.log('失敗');
     });
