@@ -33,7 +33,7 @@ function send(file, predict) {
     }).fail(function(data, textStatus, error) {
         $("#overlay").fadeOut(300);
         if (textStatus){
-            alert(textStatus)
+            alert('読み込めませんでした。')
         }
         alert(jqXHR.status);
         console.log('失敗');
