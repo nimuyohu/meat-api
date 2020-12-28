@@ -30,7 +30,7 @@ function scoreRendering(score) {
     // 点数のレンダリング
     ReactDOM.render(
         <div>
-            {(score + 1) * 10}点
+            {((score + 1) * 10).toString().substring( 0, 4 )}点
         </div>,
         document.getElementById('result')
     );

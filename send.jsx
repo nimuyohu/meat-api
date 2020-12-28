@@ -1,14 +1,29 @@
 // API呼び出し時にひつようなパラメータを受ける。
-function send(file, predict) {
+async function send(file, predict) {
 
     // APIキーとURL
     var API_KEY = 'DZZ2gMQrsiVreHBQqPgTQXczoJieyebo';
     var END_POINT = 'https://api.a3rt.recruit-tech.co.jp/image_influence/v1/meat_score';
 
+    console.log(file)
+
+    // https://github.com/Donaldcwl/browser-image-compression　画像ファイル圧縮ライブラリ
+    // 画像ファイル圧縮のためのオプション
+    const options = {
+        maxSizeMB: 3,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true
+    }
+
+    const compressedFile = await imageCompression(file, options);
+    console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
+    console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); 
+    console.log(compressedFile)
+
     // TODO: API呼び出し
     var formdata = new FormData();
     formdata.append('apikey', API_KEY);
-    formdata.append('imagefile', file);
+    formdata.append('imagefile', compressedFile);
     formdata.append('predict', predict);
     $("#overlay").fadeIn(300);
     $.ajax({
@@ -31,8 +46,8 @@ function send(file, predict) {
         evalRendering(difference);
 
     }).fail(function(data, textStatus, error) {
-        $("#overlay").fadeOut(300);
         if (textStatus){
+            $("#overlay").fadeOut(300);
             alert('読み込めませんでした。')
         }
         alert(jqXHR.status);
@@ -40,7 +55,8 @@ function send(file, predict) {
     });
 
     // Responseとして返却されたスコアを引数に渡す。
-    
 };
+
+
 
 window.send = send;
